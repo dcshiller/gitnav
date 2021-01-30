@@ -1,5 +1,10 @@
 require 'git';
 require 'colorize';
+require "action_view"
+require 'active_support/core_ext/date/conversions'
+require 'active_support/core_ext/numeric/time'
+
+include ActionView::Helpers::DateHelper
 
 class Display
   attr_reader :win
@@ -32,20 +37,27 @@ class Display
       }
      else
       win.attron(color_pair(1)) {
-        add(branch.name)
+        size = g.diff('master', branch.name).size
+        add("#{branch.name} (#{size})")
       }
      end
     new_line
     add(branch.gcommit.author.name)
-    add(g.diff('master', branch.name).size.to_s)
     new_line
-    add(branch.gcommit.date.to_s)
+    time_from = distance_of_time_in_words_to_now(branch.gcommit.date)
+    add(time_from)
     new_line
     new_line
   end
 
   def add_bare_branch(branch)
-    add(branch.name)
+    if (branch.name == current_branch.name)
+      win.attron(color_pair(2)) {
+        add(branch.name)
+      }
+    else
+      add(branch.name)
+    end
     new_line
   end
 
