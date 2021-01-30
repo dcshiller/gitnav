@@ -18,6 +18,12 @@ class Controls
       if event.value == 'q'
         close_screen
         exit
+      elsif event.value == " "
+        settings.select_branch
+        callback.call if callback
+      elsif event.value == "x"
+        settings.delete_branch
+        callback.call if callback
       elsif event.value == "\e[B" or event.value == "j"
         settings.next_branch
         callback.call if callback
