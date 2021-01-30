@@ -12,6 +12,7 @@ class Manager
     controls.on_update {
       display.redraw settings
     }
+    controls.listen
   end
 end
 
