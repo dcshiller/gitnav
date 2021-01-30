@@ -49,6 +49,10 @@ class Settings
     branch.name == selected_branch.name
   end
 
+  def is_current_branch?(branch)
+    branch.name == current_branch.name
+  end
+
   private
 
   def branches
@@ -58,4 +62,9 @@ class Settings
   def g
     Git.open('./');
   end
+
+  def current_branch
+    branches[g.current_branch]
+  end
+
 end

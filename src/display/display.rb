@@ -30,7 +30,7 @@ class Display
 
   def add_detailed_branch(branch, settings)
     new_line
-    if (branch.name == current_branch.name)
+    if (settings.is_current_branch? branch)
       win.attron(color_pair(2)) {
         add(title_line(branch, settings))
       }
@@ -49,7 +49,7 @@ class Display
   end
 
   def add_bare_branch(branch, settings)
-    if (branch.name == current_branch.name)
+    if (settings.is_current_branch? branch)
       win.attron(color_pair(2)) {
         add(title_line branch, settings)
       }
@@ -64,10 +64,6 @@ class Display
     suffix = " (#{size})" if settings.is_in_view? branch
     if settings.is_selected? branch then prefix = '+' end
     [prefix, branch.name, suffix].compact.join
-  end
-
-  def current_branch
-    g.branches[g.current_branch]
   end
 
   def g
