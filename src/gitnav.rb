@@ -9,7 +9,7 @@ class GitNav
       curs_set 0
       noecho
       start_color
-      init_pair(1, 1, 0)
+      init_pair(1, 3, 0)
       init_pair(2, 2, 0)
       Manager.new
     ensure

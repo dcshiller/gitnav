@@ -5,7 +5,8 @@ class Settings
 
   def initialize
     @view_branch = branches[g.current_branch]
-    @selected_branch = nil;
+    @selected_branch = nil
+    @paused = false
   end
 
   def next_branch
@@ -53,6 +54,22 @@ class Settings
     branch.name == current_branch.name
   end
 
+  def is_paused?
+    !!@paused
+  end
+
+  def is_not_paused?
+    !!@paused
+  end
+
+  def pause!
+    @paused = true
+  end
+
+  def unpause!
+    @paused = false
+  end
+
   private
 
   def branches
@@ -60,11 +77,10 @@ class Settings
   end
 
   def g
-    Git.open('./');
+    @git ||= Git.open('./');
   end
 
   def current_branch
-    branches[g.current_branch]
+    @current_branch ||= branches[g.current_branch]
   end
-
 end

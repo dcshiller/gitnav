@@ -14,7 +14,6 @@ class Display
 
   def redraw(settings)
     win.setpos(0,0)
-    g = Git.open('./');
     branches = g.branches.local
     branches.each do |branch|
       if settings.is_in_view?(branch)
@@ -26,10 +25,18 @@ class Display
     win.refresh
   end
 
+  def pause!
+    @paused = true
+  end
+
+  def unpause!
+    @paused = false
+  end
+
   private
 
   def add_detailed_branch(branch, settings)
-    new_line
+    new_line unless settings.is_paused?
     if (settings.is_current_branch? branch)
       win.attron(color_pair(2)) {
         add(title_line(branch, settings))
@@ -39,12 +46,14 @@ class Display
         add(title_line branch, settings)
       }
      end
-    new_line
-    add(branch.gcommit.author.name)
-    new_line
-    time_from = distance_of_time_in_words_to_now(branch.gcommit.date)
-    add(time_from + " ago")
-    new_line
+    unless settings.is_paused?
+      new_line
+      add(branch.gcommit.author.name)
+      new_line
+      time_from = distance_of_time_in_words_to_now(branch.gcommit.date)
+      add(time_from + " ago")
+      new_line
+    end
     new_line
   end
 
@@ -60,14 +69,16 @@ class Display
   end
 
   def title_line(branch, settings)
-    size = g.diff(settings.selected_branch&.name || 'master', branch.name).size
-    suffix = " (#{size})" if settings.is_in_view? branch
+    unless settings.is_paused?
+      size = g.diff(settings.selected_branch&.name || 'master', branch.name).size
+      suffix = " (#{size})" if settings.is_in_view?(branch)
+    end
     if settings.is_selected? branch then prefix = '+' end
     [prefix, branch.name, suffix].compact.join
   end
 
   def g
-    Git.open('./');
+    @git ||= Git.open('./');
   end
 
   def add(string)

@@ -2,9 +2,10 @@ require 'tty-reader'
 require 'byebug'
 class Controls
   attr_accessor :settings, :callback
+  attr_reader :last_change
 
   def initialize
-
+    @last_change = nil
   end
 
   def on_update(&block)
@@ -20,25 +21,41 @@ class Controls
         exit
       elsif event.value == " "
         settings.select_branch
-        callback.call if callback
+        handle_change
       elsif event.value == "x"
         settings.delete_branch
-        callback.call if callback
+        handle_change
       elsif event.value == "\e[B" or event.value == "j"
         settings.next_branch
-        callback.call if callback
+        handle_change
       elsif event.value == "\e[A" or event.value == "k"
         settings.prev_branch
-        callback.call if callback
+        handle_change
       elsif event.value == "\n" or event.value == "\r"
         settings.save_and_exit
-        callback.call if callback
+        handle_change
       end
     end
 
     loop do
       # print reader.cursor.clear_line
       reader.read_keypress(nonblock: true)
+    end
+  end
+
+  private
+
+  def handle_change
+    settings.pause!
+    callback.call if callback
+    new_rand = rand(10000)
+    @last_change = new_rand
+    Thread.new do
+      sleep 2
+      if new_rand == last_change
+        settings.unpause!
+        callback.call if callback
+      end
     end
   end
 end
