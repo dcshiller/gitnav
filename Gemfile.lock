@@ -1,9 +1,45 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    actionview (6.1.4.1)
+      activesupport (= 6.1.4.1)
+      builder (~> 3.1)
+      erubi (~> 1.4)
+      rails-dom-testing (~> 2.0)
+      rails-html-sanitizer (~> 1.1, >= 1.2.0)
+    activesupport (6.1.4.1)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 1.6, < 2)
+      minitest (>= 5.1)
+      tzinfo (~> 2.0)
+      zeitwerk (~> 2.3)
+    builder (3.2.4)
+    byebug (11.1.3)
+    colorize (0.8.1)
+    concurrent-ruby (1.1.9)
+    crass (1.0.6)
     curses (1.4.0)
+    erubi (1.10.0)
     git (1.7.0)
       rchardet (~> 1.8)
+    i18n (1.8.11)
+      concurrent-ruby (~> 1.0)
+    loofah (2.12.0)
+      crass (~> 1.0.2)
+      nokogiri (>= 1.5.9)
+    mini_portile2 (2.6.1)
+    minitest (5.14.4)
+    nokogiri (1.12.5)
+      mini_portile2 (~> 2.6.1)
+      racc (~> 1.4)
+    nokogiri (1.12.5-x86_64-linux)
+      racc (~> 1.4)
+    racc (1.6.0)
+    rails-dom-testing (2.0.3)
+      activesupport (>= 4.2.0)
+      nokogiri (>= 1.6)
+    rails-html-sanitizer (1.4.2)
+      loofah (~> 2.3)
     rchardet (1.8.0)
     tty-cursor (0.7.1)
     tty-reader (0.9.0)
@@ -11,15 +47,22 @@ GEM
       tty-screen (~> 0.8)
       wisper (~> 2.0)
     tty-screen (0.8.1)
+    tzinfo (2.0.4)
+      concurrent-ruby (~> 1.0)
     wisper (2.0.1)
+    zeitwerk (2.5.1)
 
 PLATFORMS
+  ruby
   x86_64-linux
 
 DEPENDENCIES
+  actionview
+  byebug
+  colorize
   curses
   git
   tty-reader
 
 BUNDLED WITH
-   2.2.1
+   2.2.25

@@ -34,6 +34,8 @@ class Settings
     branch_to_delete = @view_branch
     prev_branch
     branch_to_delete.delete
+    @selected_branch = nil
+    @branches = nil # refresh
   end
 
   def save_and_exit
@@ -73,7 +75,7 @@ class Settings
   private
 
   def branches
-    g.branches
+    @branches ||= g.branches
   end
 
   def g

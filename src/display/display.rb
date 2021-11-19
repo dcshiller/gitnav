@@ -70,8 +70,10 @@ class Display
 
   def title_line(branch, settings)
     unless settings.is_paused?
-      size = g.diff(settings.selected_branch&.name || 'master', branch.name).size
-      suffix = " (#{size})" if settings.is_in_view?(branch)
+      if settings.is_in_view?(branch)
+        size = g.diff(settings.selected_branch&.name || 'master', branch.name).size
+        suffix = " (#{size})"
+      end
     end
     if settings.is_selected? branch then prefix = '+' end
     [prefix, branch.name, suffix].compact.join
