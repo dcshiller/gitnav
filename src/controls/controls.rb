@@ -23,7 +23,7 @@ class Controls
         settings.select_branch
         handle_change
       elsif event.value == "x"
-        settings.delete_branch
+        settings.delete_branch_if_able
         handle_change
       elsif event.value == "\e[B" or event.value == "j"
         settings.next_branch

@@ -3,6 +3,7 @@ require 'colorize';
 require "action_view"
 require 'active_support/core_ext/date/conversions'
 require 'active_support/core_ext/numeric/time'
+require_relative '../git_commands/information'
 
 include ActionView::Helpers::DateHelper
 
@@ -14,7 +15,7 @@ class Display
 
   def redraw(settings)
     win.setpos(0,0)
-    branches = g.branches.local
+    branches = all_branch_names
     branches.each do |branch|
       if settings.is_in_view?(branch)
         add_detailed_branch branch, settings
@@ -48,10 +49,10 @@ class Display
      end
     unless settings.is_paused?
       new_line
-      add(branch.gcommit.author.name)
+# add(branch.gcommit.author.name)
       new_line
-      time_from = distance_of_time_in_words_to_now(branch.gcommit.date)
-      add(time_from + " ago")
+#      time_from = distance_of_time_in_words_to_now(branch.gcommit.date)
+#   add(time_from + " ago")
       new_line
     end
     new_line
@@ -69,18 +70,15 @@ class Display
   end
 
   def title_line(branch, settings)
-    unless settings.is_paused?
-      if settings.is_in_view?(branch)
-        size = g.diff(settings.selected_branch&.name || 'master', branch.name).size
-        suffix = " (#{size})"
-      end
-    end
+    suffix = ''
+    # unless settings.is_paused?
+      # if settings.is_in_view?(branch)
+        # size = g.diff(settings.selected_branch&.name || 'master', branch.name).size
+        # suffix = " (#{size})"
+      # end
+    # end
     if settings.is_selected? branch then prefix = '+' end
-    [prefix, branch.name, suffix].compact.join
-  end
-
-  def g
-    @git ||= Git.open('./');
+    [prefix, branch, suffix].compact.join
   end
 
   def add(string)

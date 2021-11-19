@@ -1,59 +1,63 @@
 require 'git';
+require_relative '../git_commands/information'
+require_relative '../git_commands/navigation'
+require_relative '../git_commands/operation'
 
 class Settings
-  attr_reader :view_branch, :selected_branch
+  attr_reader :view_branch_name, :selected_branch_name
 
   def initialize
-    @view_branch = branches[g.current_branch]
-    @selected_branch = nil
+    @view_branch_name = current_branch_name
+    @selected_branch_name = nil
     @paused = false
   end
 
   def next_branch
-    current_branch_index = branches.find_index { |b| b.name == view_branch.name }
-    next_branch_index = (current_branch_index + 1) % branches.size
-    @view_branch = branches.to_a[next_branch_index]
+    current_branch_index = all_branch_names.find_index { |b| b == view_branch_name }
+    next_branch_index = (current_branch_index + 1) % all_branch_names.size
+    @view_branch_name = all_branch_names.to_a[next_branch_index]
   end
 
   def prev_branch
-    current_branch_index = branches.find_index { |b| b.name == view_branch&.name }
-    prev_branch_index = (current_branch_index - 1) % branches.size
-    @view_branch = branches.to_a[prev_branch_index]
+    current_branch_index = all_branch_names.find_index { |b| b == view_branch_name }
+    prev_branch_index = (current_branch_index - 1) % all_branch_names.size
+    @view_branch_name = all_branch_names.to_a[prev_branch_index]
   end
 
   def select_branch
-    if selected_branch&.name == view_branch.name
-      @selected_branch = nil
+    if selected_branch_name == view_branch_name
+      @selected_branch_name = nil
     else
-      @selected_branch = view_branch
+      @selected_branch_name = view_branch_name
     end
   end
 
-  def delete_branch
-    return unless selected_branch&.contains?(@view_branch.name)
-    branch_to_delete = @view_branch
+  def delete_branch_if_able
+    return unless branch_contains?(view_branch_name, selected_branch_name)
+    branch_to_delete = view_branch_name
     prev_branch
-    branch_to_delete.delete
-    @selected_branch = nil
-    @branches = nil # refresh
+    delete_branch branch_to_delete
+    clear_cache
+    @selected_branch_name = nil
   end
 
   def save_and_exit
-    @view_branch.checkout
+    # Checkout view
+    checkout view_branch_name
     exit
   end
 
   def is_in_view?(branch)
-    branch.name == view_branch.name
+    branch == view_branch_name
   end
 
   def is_selected?(branch)
-    return false unless selected_branch
-    branch.name == selected_branch.name
+    return false unless selected_branch_name
+    branch == selected_branch_name
   end
 
   def is_current_branch?(branch)
-    branch.name == current_branch.name
+    branch == current_branch_name
   end
 
   def is_paused?
@@ -70,19 +74,5 @@ class Settings
 
   def unpause!
     @paused = false
-  end
-
-  private
-
-  def branches
-    @branches ||= g.branches
-  end
-
-  def g
-    @git ||= Git.open('./');
-  end
-
-  def current_branch
-    @current_branch ||= branches[g.current_branch]
   end
 end
