@@ -8,15 +8,19 @@ require_relative '../git_commands/information'
 include ActionView::Helpers::DateHelper
 
 class Display
-  attr_reader :win
+  attr_reader :win, :error_win
   def initialize
     @win = Curses::Window.new(0, 0, 1, 1)
+    @error_win = Curses::Window.new(0, 0, Curses::lines - 3, 1)
   end
 
   def redraw(settings)
+    clear_cache
+    win.clear
     win.setpos(0,0)
     branches = all_branch_names
-    branches.each do |branch|
+    branch_index = branches.index(settings.view_branch_name) || 0
+    branches.slice([branch_index - Curses::lines + 8, 0].max, Curses::lines - 5).each do |branch|
       if settings.is_in_view?(branch)
         add_detailed_branch branch, settings
       else
@@ -24,6 +28,9 @@ class Display
       end
     end
     win.refresh
+    error_win.setpos(0,0)
+    error_win.addstr(settings.notes[-1])
+    error_win.refresh
   end
 
   def pause!
@@ -37,7 +44,7 @@ class Display
   private
 
   def add_detailed_branch(branch, settings)
-    new_line unless settings.is_paused?
+    # ew_line unless settings.is_paused?
     if (settings.is_current_branch? branch)
       win.attron(color_pair(2)) {
         add(title_line(branch, settings))
@@ -48,12 +55,9 @@ class Display
       }
      end
     unless settings.is_paused?
-      new_line
 # add(branch.gcommit.author.name)
-      new_line
 #      time_from = distance_of_time_in_words_to_now(branch.gcommit.date)
 #   add(time_from + " ago")
-      new_line
     end
     new_line
   end

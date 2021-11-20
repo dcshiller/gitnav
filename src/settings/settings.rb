@@ -4,12 +4,13 @@ require_relative '../git_commands/navigation'
 require_relative '../git_commands/operation'
 
 class Settings
-  attr_reader :view_branch_name, :selected_branch_name
+  attr_reader :view_branch_name, :selected_branch_name, :notes
 
   def initialize
     @view_branch_name = current_branch_name
     @selected_branch_name = nil
     @paused = false
+    @notes = []
   end
 
   def next_branch
@@ -19,7 +20,7 @@ class Settings
   end
 
   def prev_branch
-    current_branch_index = all_branch_names.find_index { |b| b == view_branch_name }
+    current_branch_index = all_branch_names.find_index { |b| b == view_branch_name } || 0
     prev_branch_index = (current_branch_index - 1) % all_branch_names.size
     @view_branch_name = all_branch_names.to_a[prev_branch_index]
   end
@@ -33,16 +34,21 @@ class Settings
   end
 
   def delete_branch_if_able
-    return unless branch_contains?(view_branch_name, selected_branch_name)
+    unless branch_contains?(view_branch_name, selected_branch_name)
+      notes.push 'No branch selected.' and return
+    end
     branch_to_delete = view_branch_name
-    prev_branch
-    delete_branch branch_to_delete
-    clear_cache
-    @selected_branch_name = nil
+    err = delete_branch branch_to_delete
+    if err
+      notes.push err
+    else
+      prev_branch
+      clear_cache
+      @selected_branch_name = nil
+    end
   end
 
   def save_and_exit
-    # Checkout view
     checkout view_branch_name
     exit
   end
@@ -74,5 +80,11 @@ class Settings
 
   def unpause!
     @paused = false
+  end
+
+  private
+
+  def add_note(note)
+    notes << note
   end
 end
