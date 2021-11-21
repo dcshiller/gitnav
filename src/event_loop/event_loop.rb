@@ -6,7 +6,8 @@ require 'byebug'
 class EventLoop
   attr_accessor :controller, :callback
 
-  def initialize
+  def initialize(controller)
+    @controller = controller
   end
 
   def on_update(&block)
