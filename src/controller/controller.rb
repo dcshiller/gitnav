@@ -3,7 +3,7 @@ require_relative '../git_commands/information'
 require_relative '../git_commands/navigation'
 require_relative '../git_commands/operation'
 
-class Settings
+class Controller
   attr_reader :view_branch_name, :selected_branch_name, :notes
 
   def initialize

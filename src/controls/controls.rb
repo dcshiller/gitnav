@@ -1,7 +1,7 @@
 require 'tty-reader'
 require 'byebug'
 class Controls
-  attr_accessor :settings, :callback
+  attr_accessor :controller, :callback
   attr_reader :last_change
 
   def initialize
@@ -20,19 +20,19 @@ class Controls
         close_screen
         exit
       elsif event.value == " "
-        settings.select_branch
+        controller.select_branch
         handle_change
       elsif event.value == "x"
-        settings.delete_branch_if_able
+        controller.delete_branch_if_able
         handle_change
       elsif event.value == "\e[B" or event.value == "j"
-        settings.next_branch
+        controller.next_branch
         handle_change
       elsif event.value == "\e[A" or event.value == "k"
-        settings.prev_branch
+        controller.prev_branch
         handle_change
       elsif event.value == "\n" or event.value == "\r"
-        settings.save_and_exit
+        controller.save_and_exit
         handle_change
       end
     end
@@ -46,14 +46,14 @@ class Controls
   private
 
   def handle_change
-    settings.pause!
+    controller.pause!
     callback.call if callback
     new_rand = rand(10000)
     @last_change = new_rand
     Thread.new do
       sleep 2
       if new_rand == last_change
-        settings.unpause!
+        controller.unpause!
         callback.call if callback
       end
     end
