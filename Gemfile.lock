@@ -20,8 +20,6 @@ GEM
     crass (1.0.6)
     curses (1.4.0)
     erubi (1.10.0)
-    git (1.7.0)
-      rchardet (~> 1.8)
     i18n (1.8.11)
       concurrent-ruby (~> 1.0)
     loofah (2.12.0)
@@ -40,7 +38,6 @@ GEM
       nokogiri (>= 1.6)
     rails-html-sanitizer (1.4.2)
       loofah (~> 2.3)
-    rchardet (1.8.0)
     tty-cursor (0.7.1)
     tty-reader (0.9.0)
       tty-cursor (~> 0.7)
@@ -61,7 +58,6 @@ DEPENDENCIES
   byebug
   colorize
   curses
-  git
   tty-reader
 
 BUNDLED WITH

@@ -1,4 +1,3 @@
-require 'git';
 require 'colorize';
 require "action_view"
 require 'active_support/core_ext/date/conversions'
@@ -49,15 +48,10 @@ class Display
       win.attron(color_pair(2)) {
         add(title_line(branch, settings))
       }
-     else
+    else
       win.attron(color_pair(1)) {
         add(title_line branch, settings)
       }
-     end
-    unless settings.is_paused?
-# add(branch.gcommit.author.name)
-#      time_from = distance_of_time_in_words_to_now(branch.gcommit.date)
-#   add(time_from + " ago")
     end
     new_line
   end
@@ -75,12 +69,6 @@ class Display
 
   def title_line(branch, settings)
     suffix = ''
-    # unless settings.is_paused?
-      # if settings.is_in_view?(branch)
-        # size = g.diff(settings.selected_branch&.name || 'master', branch.name).size
-        # suffix = " (#{size})"
-      # end
-    # end
     if settings.is_selected? branch then prefix = '+' end
     [prefix, branch, suffix].compact.join
   end
