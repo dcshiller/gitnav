@@ -1,3 +1,5 @@
+# Instructions for drawing display
+
 require 'colorize';
 require "action_view"
 require 'active_support/core_ext/date/conversions'

@@ -1,3 +1,5 @@
+# Handles keyboard input and output
+
 require 'tty-reader'
 require 'byebug'
 

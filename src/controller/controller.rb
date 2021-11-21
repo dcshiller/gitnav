@@ -1,4 +1,5 @@
-require 'git';
+ # Interface for git commands and internal settings
+
 require_relative '../git_commands/information'
 require_relative '../git_commands/navigation'
 require_relative '../git_commands/operation'
