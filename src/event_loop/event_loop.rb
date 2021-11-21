@@ -1,6 +1,7 @@
 require 'tty-reader'
 require 'byebug'
-class Controls
+
+class EventLoop
   attr_accessor :controller, :callback
   attr_reader :last_change
 
