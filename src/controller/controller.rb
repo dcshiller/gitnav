@@ -1,8 +1,8 @@
  # Interface for git commands and internal settings
 
-require_relative '../git_commands/information'
-require_relative '../git_commands/navigation'
-require_relative '../git_commands/operation'
+require_relative './git_commands/information'
+require_relative './git_commands/navigation'
+require_relative './git_commands/operation'
 
 class Controller
   attr_reader :view_branch_name, :selected_branch_name, :notes
@@ -11,6 +11,10 @@ class Controller
     @view_branch_name = current_branch_name
     @selected_branch_name = nil
     @notes = []
+  end
+
+  def refresh
+    clear_cache
   end
 
   def next_branch

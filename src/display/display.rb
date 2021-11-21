@@ -4,7 +4,6 @@ require 'colorize';
 require "action_view"
 require 'active_support/core_ext/date/conversions'
 require 'active_support/core_ext/numeric/time'
-require_relative '../git_commands/information'
 
 include ActionView::Helpers::DateHelper
 
@@ -16,9 +15,9 @@ class Display
   end
 
   def redraw(controller)
-    clear_cache
     win.clear
     win.setpos(0,0)
+    controller.refresh
     branches = all_branch_names
     branch_index = branches.index(controller.view_branch_name) || 0
     branches.slice([branch_index - Curses::lines + 8, 0].max, Curses::lines - 5).each do |branch|
