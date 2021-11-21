@@ -10,7 +10,6 @@ class Controller
   def initialize
     @view_branch_name = current_branch_name
     @selected_branch_name = nil
-    @paused = false
     @notes = []
   end
 
@@ -65,22 +64,6 @@ class Controller
 
   def is_current_branch?(branch)
     branch == current_branch_name
-  end
-
-  def is_paused?
-    !!@paused
-  end
-
-  def is_not_paused?
-    !!@paused
-  end
-
-  def pause!
-    @paused = true
-  end
-
-  def unpause!
-    @paused = false
   end
 
   private

@@ -5,10 +5,8 @@ require 'byebug'
 
 class EventLoop
   attr_accessor :controller, :callback
-  attr_reader :last_change
 
   def initialize
-    @last_change = nil
   end
 
   def on_update(&block)
@@ -49,16 +47,6 @@ class EventLoop
   private
 
   def handle_change
-    controller.pause!
     callback.call if callback
-    new_rand = rand(10000)
-    @last_change = new_rand
-    Thread.new do
-      sleep 2
-      if new_rand == last_change
-        controller.unpause!
-        callback.call if callback
-      end
-    end
   end
 end

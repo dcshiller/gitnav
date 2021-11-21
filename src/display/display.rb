@@ -34,18 +34,9 @@ class Display
     error_win.refresh
   end
 
-  def pause!
-    @paused = true
-  end
-
-  def unpause!
-    @paused = false
-  end
-
   private
 
   def add_detailed_branch(branch, controller)
-    # ew_line unless controller.is_paused?
     if (controller.is_current_branch? branch)
       win.attron(color_pair(2)) {
         add(title_line(branch, controller))
