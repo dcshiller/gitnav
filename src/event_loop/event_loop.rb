@@ -47,8 +47,10 @@ class EventLoop
       elsif event.value == "\e[A" or event.value == "k"
         controller.prev_branch
         handle_change
-      elsif event.value == "\n" or event.value == "\r"
+      elsif event.value == "\e[C" or event.value == "l"
         controller.save_and_exit
+      elsif event.value == "\n" or event.value == "\r"
+        controller.checkout_viewed_branch
         handle_change
       elsif event.value == 'n'
         handle_change

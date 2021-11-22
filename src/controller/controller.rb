@@ -50,8 +50,12 @@ class Controller
     end
   end
 
-  def save_and_exit
+  def checkout_viewed_branch
     checkout view_branch_name
+  end
+
+  def save_and_exit
+    checkout_viewed_branch
     exit
   end
 
