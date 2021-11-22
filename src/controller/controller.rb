@@ -16,6 +16,10 @@ class Controller
     clear_cache
   end
 
+  def clear_notes
+     @notes = []
+  end
+
   def next_branch
     current_branch_index = all_branch_names.find_index { |b| b == view_branch_name }
     next_branch_index = (current_branch_index + 1) % all_branch_names.size
@@ -28,14 +32,21 @@ class Controller
     @view_branch_name = all_branch_names.to_a[prev_branch_index]
   end
 
-  def delete_branch_if_able
-    err = delete_branch view_branch_name
+  # Delete branch. If not merged, ask for confirmation then force.
+  def delete_branch_if_able(force = false)
+    err = delete_branch view_branch_name, force
     if err
-      notes.push err
+      notes.push err + "\nForce? y/n"
     else
-      notes.push "#{view_brach_name} deleted"
+      notes.push "#{view_branch_name} deleted"
       prev_branch
       clear_cache
+    end
+    if (!force && err)
+        return {
+          on_confirm: proc {
+          delete_branch_if_able true
+        } }
     end
   end
 
@@ -50,6 +61,10 @@ class Controller
 
   def is_current_branch?(branch)
     branch == current_branch_name
+  end
+
+  def get_branch_names
+     all_branch_names
   end
 
   private

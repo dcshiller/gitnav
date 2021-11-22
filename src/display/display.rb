@@ -17,6 +17,7 @@ class Display
   end
 
   def redraw
+    controller.refresh
     redraw_main_panel
     redraw_error_panel
   end
@@ -26,8 +27,7 @@ class Display
   def redraw_main_panel
     main_panel.clear
     main_panel.setpos(0,0)
-    controller.refresh
-    branches = all_branch_names
+    branches = controller.get_branch_names
     branch_index = branches.index(controller.view_branch_name) || 0
     branches.slice([branch_index - Curses::lines + 8, 0].max, Curses::lines - 5).each do |branch|
       if controller.is_in_view?(branch)
