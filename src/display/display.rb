@@ -70,9 +70,7 @@ class Display
   end
 
   def title_line(branch)
-    suffix = ''
-    if controller.is_selected? branch then prefix = '+' end
-    [prefix, branch, suffix].compact.join
+    branch
   end
 
   def add(string)

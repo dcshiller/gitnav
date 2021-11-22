@@ -22,7 +22,6 @@ class EventLoop
         close_screen
         exit
       elsif event.value == " "
-        controller.select_branch
         handle_change
       elsif event.value == "x"
         controller.delete_branch_if_able
