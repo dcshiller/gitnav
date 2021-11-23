@@ -1,7 +1,7 @@
 # Handles keyboard input and output
 
 require 'tty-reader'
-require 'byebug'
+# require 'byebug'
 
 class EventLoop
   attr_reader :controller, :update_callback, :confirm_callback

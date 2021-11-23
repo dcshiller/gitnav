@@ -8,4 +8,7 @@ gem 'curses'
 gem 'tty-reader'
 gem 'colorize'
 gem 'actionview'
-gem 'byebug'
+
+group :test, :development do
+  gem 'byebug'
+end
