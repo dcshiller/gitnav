@@ -33,6 +33,9 @@ class EventLoop
       if event.value == 'q'
         close_screen
         exit
+      elsif event.value == 'd'
+        controller.toggle_data
+        handle_change
       elsif event.value == " "
         handle_change
       elsif event.value == "x"

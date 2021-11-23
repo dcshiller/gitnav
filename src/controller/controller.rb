@@ -5,7 +5,7 @@ require_relative './git_commands/navigation'
 require_relative './git_commands/operation'
 
 class Controller
-  attr_reader :view_branch_name, :notes
+  attr_reader :view_branch_name, :notes, :should_show_data
 
   def initialize
     @view_branch_name = current_branch_name
@@ -69,6 +69,22 @@ class Controller
 
   def get_branch_names
      all_branch_names
+  end
+
+  def get_author(branch)
+     authors_by_branch[branch]
+  end
+
+  def get_date(branch)
+     dates_by_branch[branch]
+  end
+
+  def toggle_data
+    @should_show_data = !should_show_data
+  end
+
+  def should_show_data?
+    should_show_data
   end
 
   private

@@ -1,6 +1,5 @@
 # Instructions for drawing display
 
-require 'colorize';
 require "action_view"
 require 'active_support/core_ext/date/conversions'
 require 'active_support/core_ext/numeric/time'
@@ -30,11 +29,7 @@ class Display
     branches = controller.get_branch_names
     branch_index = branches.index(controller.view_branch_name) || 0
     branches.slice([branch_index - Curses::lines + 8, 0].max, Curses::lines - 5).each do |branch|
-      if controller.is_in_view?(branch)
-        add_detailed_branch branch
-      else
-        add_bare_branch branch
-      end
+      add_branch branch
     end
     main_panel.refresh
   end
@@ -45,32 +40,17 @@ class Display
     error_panel.refresh
   end
 
-  def add_detailed_branch(branch)
-    if (controller.is_current_branch? branch)
-      main_panel.attron(color_pair(2)) {
-        add(title_line(branch))
-      }
-    else
-      main_panel.attron(color_pair(1)) {
-        add(title_line branch)
-      }
-    end
+  def add_branch(branch)
+    add(branch_line branch)
     new_line
   end
 
-  def add_bare_branch(branch)
-    if (controller.is_current_branch? branch)
-      main_panel.attron(color_pair(2)) {
-        add(title_line branch)
-      }
+  def branch_line(branch)
+    if (controller.should_show_data?)
+      "#{time_ago_in_words controller.get_date(branch)}   #{controller.get_author(branch)}  #{branch}"
     else
-      add(title_line branch)
+      branch
     end
-    new_line
-  end
-
-  def title_line(branch)
-    branch
   end
 
   def add(string)
