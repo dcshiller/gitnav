@@ -59,7 +59,7 @@ class Controller
     exit
   end
 
-  def is_in_view?(branch)
+  def is_view_branch?(branch)
     branch == view_branch_name
   end
 

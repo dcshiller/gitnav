@@ -41,13 +41,23 @@ class Display
   end
 
   def add_branch(branch)
-    add(branch_line branch)
+    if (controller.is_current_branch? branch)
+      main_panel.attron(color_pair(2)) {
+        add(branch_line(branch))
+      }
+    elsif (controller.is_view_branch? branch)
+      main_panel.attron(color_pair(1)) {
+        add(branch_line branch)
+      }
+    else
+      add(branch_line branch)
+    end
     new_line
   end
 
   def branch_line(branch)
     if (controller.should_show_data?)
-      "#{time_ago_in_words controller.get_date(branch)}   #{controller.get_author(branch)}  #{branch}"
+      "#{time_ago_in_words(controller.get_date(branch)).slice(0, 15).ljust(15)}   #{controller.get_author(branch).slice(0,15).ljust(15)}  #{branch}"
     else
       branch
     end
