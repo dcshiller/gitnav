@@ -2,8 +2,8 @@ def current_branch_name
   @current ||= `git symbolic-ref --short HEAD`.chomp
 end
 
-def all_branch_names
-  @all ||= `git for-each-ref --format='%(refname:short)' refs/heads/`.split("\n").map(&:strip)
+def all_branch_names(sorting_order)
+  @all ||= `git for-each-ref #{sorting_order ? "--sort=#{sorting_order}" : ""} --format='%(refname:short)' refs/heads/`.split("\n").map(&:strip)
 end
 
 def branch_contains?(container, containee)
@@ -21,7 +21,7 @@ def authors_by_branch
 end
 
 def dates_by_branch
-  @dates_by_branch ||= `git for-each-ref --format='%(committerdate) }:{ %(refname:short)' refs/heads/`.
+  @dates_by_branch ||= `git for-each-ref --format='%(authordate) }:{ %(refname:short)' refs/heads/`.
     split("\n").
     reduce({}) do |accum, next_line|
     date, branch = next_line.split(' }:{ ').map(&:strip)

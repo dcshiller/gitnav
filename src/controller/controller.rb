@@ -4,11 +4,14 @@ require_relative './git_commands/information'
 require_relative './git_commands/navigation'
 require_relative './git_commands/operation'
 
+DATE_SORT = '-authordate'
+AUTHOR_SORT = 'refname'
 class Controller
-  attr_reader :view_branch_name, :notes, :should_show_data
+  attr_reader :view_branch_name, :notes, :should_show_data, :sorting_order
 
   def initialize
     @view_branch_name = current_branch_name
+    @sorting_order = AUTHOR_SORT
     @notes = []
   end
 
@@ -21,15 +24,15 @@ class Controller
   end
 
   def next_branch
-    current_branch_index = all_branch_names.find_index { |b| b == view_branch_name }
-    next_branch_index = (current_branch_index + 1) % all_branch_names.size
-    @view_branch_name = all_branch_names.to_a[next_branch_index]
+    current_branch_index = get_branch_names.find_index { |b| b == view_branch_name }
+    next_branch_index = (current_branch_index + 1) % get_branch_names.size
+    @view_branch_name = get_branch_names.to_a[next_branch_index]
   end
 
   def prev_branch
-    current_branch_index = all_branch_names.find_index { |b| b == view_branch_name } || 0
-    prev_branch_index = (current_branch_index - 1) % all_branch_names.size
-    @view_branch_name = all_branch_names.to_a[prev_branch_index]
+    current_branch_index = get_branch_names.find_index { |b| b == view_branch_name } || 0
+    prev_branch_index = (current_branch_index - 1) % get_branch_names.size
+    @view_branch_name = get_branch_names.to_a[prev_branch_index]
   end
 
   # Delete branch. If not merged, ask for confirmation then force.
@@ -68,7 +71,7 @@ class Controller
   end
 
   def get_branch_names
-     all_branch_names
+     all_branch_names sorting_order
   end
 
   def get_author(branch)
@@ -80,7 +83,15 @@ class Controller
   end
 
   def toggle_data
-    @should_show_data = !should_show_data
+     @should_show_data = !should_show_data
+  end
+
+  def toggle_sort_by_date
+     if (sorting_order == DATE_SORT)
+       @sorting_order = AUTHOR_SORT
+     else
+       @sorting_order = DATE_SORT
+     end
   end
 
   def should_show_data?

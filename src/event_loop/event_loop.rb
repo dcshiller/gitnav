@@ -55,6 +55,10 @@ class EventLoop
       elsif event.value == "\n" or event.value == "\r"
         controller.checkout_viewed_branch
         handle_change
+      elsif event.value == 't'
+        controller.toggle_sort_by_date
+        handle_change
+      # if disconfirm, redraw
       elsif event.value == 'n'
         handle_change
       end
