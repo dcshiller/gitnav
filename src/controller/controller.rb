@@ -3,15 +3,14 @@
 require_relative './git_commands/information'
 require_relative './git_commands/navigation'
 require_relative './git_commands/operation'
+require_relative './constants'
 
-DATE_SORT = '-authordate'
-AUTHOR_SORT = 'refname'
 class Controller
   attr_reader :view_branch_name, :notes, :should_show_data, :sorting_order
 
   def initialize
     @view_branch_name = current_branch_name
-    @sorting_order = AUTHOR_SORT
+    @sorting_order = NAME_SORT
     @notes = []
   end
 
@@ -87,11 +86,8 @@ class Controller
   end
 
   def toggle_sort_by_date
-     if (sorting_order == DATE_SORT)
-       @sorting_order = AUTHOR_SORT
-     else
-       @sorting_order = DATE_SORT
-     end
+    sorts = [NAME_SORT, VISIT_SORT, DATE_SORT]
+    @sorting_order = sorts[(sorts.index(sorting_order) + 1) % sorts.size]
   end
 
   def should_show_data?

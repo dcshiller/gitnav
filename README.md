@@ -27,7 +27,7 @@ Pressing 'x' will delete the currently selected branch. If the branch is not yet
 merged, you will see a y/n confirm response in the message log below the
 branchs.
 
-Pressing 't' will toggle between sorting by branch name and sorting by last
+Pressing 't' will toggle between sorting by branch name, last visit, and last
 commit date.
 
 Pressing 'd' will display date and author data for each branch.
