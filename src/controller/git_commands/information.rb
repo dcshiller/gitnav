@@ -1,3 +1,5 @@
+require 'date'
+
 def current_branch_name
   @current ||= `git symbolic-ref --short HEAD`.chomp
 end

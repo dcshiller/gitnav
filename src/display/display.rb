@@ -1,10 +1,4 @@
-# Instructions for drawing display
-
-require "action_view"
-require 'active_support/core_ext/date/conversions'
-require 'active_support/core_ext/numeric/time'
-
-include ActionView::Helpers::DateHelper
+require_relative './time_helper'
 
 class Display
   attr_reader :main_panel, :error_panel, :controller
