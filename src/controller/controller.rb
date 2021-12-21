@@ -23,7 +23,7 @@ class Controller
   end
 
   def next_branch
-    current_branch_index = get_branch_names.find_index { |b| b == view_branch_name }
+    current_branch_index = get_branch_names.find_index { |b| b == view_branch_name } || 0
     next_branch_index = (current_branch_index + 1) % get_branch_names.size
     @view_branch_name = get_branch_names.to_a[next_branch_index]
   end
