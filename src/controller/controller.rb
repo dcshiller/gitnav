@@ -6,12 +6,14 @@ require_relative './git_commands/operation'
 require_relative './constants'
 
 class Controller
-  attr_reader :view_branch_name, :notes, :should_show_data, :sorting_order
+  attr_reader :view_branch_name, :notes, :should_show_data, :sorting_order, :filter_string, :on_filter_mode
 
   def initialize
     @view_branch_name = current_branch_name
     @sorting_order = NAME_SORT
     @notes = []
+    @filter_string = ''
+    @on_filter_mode = false
   end
 
   def refresh
@@ -70,7 +72,10 @@ class Controller
   end
 
   def get_branch_names
-     all_branch_names sorting_order
+    branch_names = all_branch_names sorting_order
+    branch_names.filter do |name|
+       name.include? filter_string
+    end
   end
 
   def get_author(branch)
@@ -92,6 +97,28 @@ class Controller
 
   def should_show_data?
     should_show_data
+  end
+
+  def add_to_filter(letter)
+    @filter_string += letter
+  end
+
+  def delete_last_filter_char()
+    if filter_string.length == 0
+      set_filter_mode false
+    else
+      @filter_string = filter_string.slice(0, filter_string.length - 1) || ''
+    end
+  end
+
+  def set_filter_mode(value)
+    @on_filter_mode = value
+  end
+
+  def add_branch
+    {
+      on_input: proc { |name| create_branch name view_branch_name }
+    }
   end
 
   private

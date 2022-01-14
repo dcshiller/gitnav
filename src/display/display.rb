@@ -1,18 +1,18 @@
 require_relative './time_helper'
 
 class Display
-  attr_reader :main_panel, :error_panel, :controller
+  attr_reader :main_panel, :log_panel, :controller
 
   def initialize(controller)
     @controller = controller
     @main_panel = Curses::Window.new(0, 0, 1, 1)
-    @error_panel = Curses::Window.new(0, 0, Curses::lines - 3, 1)
+    @log_panel = Curses::Window.new(0, 0, Curses::lines - 3, 1)
   end
 
   def redraw
     controller.refresh
     redraw_main_panel
-    redraw_error_panel
+    redraw_log_panel
   end
 
   private
@@ -28,10 +28,11 @@ class Display
     main_panel.refresh
   end
 
-  def redraw_error_panel
-    error_panel.setpos(0,0)
-    error_panel.addstr(controller.notes[-1])
-    error_panel.refresh
+  def redraw_log_panel
+    log_panel.setpos(0,0)
+    log_panel.addstr(controller.filter_string.length > 0 || controller.on_filter_mode ? "/#{controller.filter_string}\n" : "\n")
+    log_panel.addstr(controller.notes[-1])
+    log_panel.refresh
   end
 
   def add_branch(branch)
