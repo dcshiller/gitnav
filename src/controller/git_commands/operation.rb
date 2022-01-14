@@ -6,6 +6,6 @@ def delete_branch(branch_name, force = false)
   false
 end
 
-def create_branch(branch_name, start_point)
+def create_git_branch(branch_name, start_point)
   Open3.capture3("git branch #{branch_name} #{start_point}")
 end

@@ -6,14 +6,20 @@ require_relative './git_commands/operation'
 require_relative './constants'
 
 class Controller
-  attr_reader :view_branch_name, :notes, :should_show_data, :sorting_order, :filter_string, :on_filter_mode
+  attr_reader :view_branch_name,
+    :handle_confirm,
+    :handle_input_done,
+    :notes, :should_show_data, :sorting_order, :filter_string, :mode, :input_text_string
 
   def initialize
     @view_branch_name = current_branch_name
     @sorting_order = NAME_SORT
     @notes = []
     @filter_string = ''
-    @on_filter_mode = false
+    @mode = nil
+    @input_text_string = ''
+    @handle_input_done = nil
+    @handle_confirm = nil
   end
 
   def refresh
@@ -47,10 +53,9 @@ class Controller
       clear_cache
     end
     if (!force && err)
-        return {
-          on_confirm: proc {
-          delete_branch_if_able true
-        } }
+      @handle_confirm = proc {
+        delete_branch_if_able true
+      }
     end
   end
 
@@ -105,20 +110,95 @@ class Controller
 
   def delete_last_filter_char()
     if filter_string.length == 0
-      set_filter_mode false
+      set_mode nil
     else
       @filter_string = filter_string.slice(0, filter_string.length - 1) || ''
     end
   end
 
-  def set_filter_mode(value)
-    @on_filter_mode = value
+  def delete_last_input_char()
+    if input_text_string.length == 0
+      set_mode nil
+      @handle_input_done = nil
+    else
+      @input_text_string = input_text_string.slice(0, input_text_string.length - 1) || ''
+    end
+  end
+
+  def set_mode(value)
+    @mode = value
+  end
+
+  def toggle_filter_mode value = nil
+    if value != nil
+      @mode = value
+      return
+    end
+    if mode != 'input' && mode != 'filter'
+      @mode = 'filter'
+    elsif mode == 'filter'
+      @mode = nil
+    end
+  end
+
+  def on_filter_mode
+    mode == 'filter'
+  end
+
+  def on_input_mode
+    mode == 'input'
   end
 
   def add_branch
-    {
-      on_input: proc { |name| create_branch name view_branch_name }
+    @mode = 'input'
+    @handle_input_done = proc {
+      create_git_branch input_text_string, view_branch_name
+      @view_branch_name = input_text_string
+      @input_text_string = ''
+      @mode = nil
     }
+  end
+
+  def add_input(input)
+    if on_filter_mode
+      add_to_filter input
+    elsif on_input_mode
+      add_to_input_text input
+    end
+  end
+
+  def delete_input
+    if on_filter_mode
+      delete_last_filter_char
+    elsif on_input_mode
+      delete_last_input_char
+    end
+  end
+
+  def add_to_input_text char
+    @input_text_string += char
+  end
+
+  def awaiting_confirmation?
+    !!handle_confirm
+  end
+
+  def receiving_input?
+   !!handle_input_done
+  end
+
+  def enter_input!
+    handle_input_done.call
+    @handle_input_done = nil
+  end
+
+  def confirm!
+    handle_confirm.call
+    @handle_confirm = nil
+  end
+
+  def disconfirm!
+    @handle_confirm = nil
   end
 
   private
