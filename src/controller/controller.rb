@@ -7,29 +7,40 @@ require_relative './constants'
 
 class Controller
   attr_reader :view_branch_name,
+    :filter_string,
     :handle_confirm,
     :handle_input_done,
-    :notes, :should_show_data, :sorting_order, :filter_string, :mode, :input_text_string
+    :input_text_string,
+    :mode,
+    :notes,
+    :should_show_data,
+    :sorting_order
 
   def initialize
-    @view_branch_name = current_branch_name
-    @sorting_order = NAME_SORT
-    @notes = []
     @filter_string = ''
-    @mode = nil
-    @input_text_string = ''
-    @handle_input_done = nil
     @handle_confirm = nil
+    @handle_input_done = nil
+    @input_text_string = ''
+    @mode = nil
+    @notes = []
+    @sorting_order = NAME_SORT
+    @view_branch_name = current_branch_name
   end
 
   def refresh
     clear_cache
   end
 
+  def save_and_exit
+    checkout_viewed_branch
+    exit
+  end
+
   def clear_notes
      @notes = []
   end
 
+  # Navitagion
   def next_branch
     current_branch_index = get_branch_names.find_index { |b| b == view_branch_name } || 0
     next_branch_index = (current_branch_index + 1) % get_branch_names.size
@@ -59,13 +70,18 @@ class Controller
     end
   end
 
-  def checkout_viewed_branch
-    checkout view_branch_name
+  def add_branch
+    @mode = 'input'
+    @handle_input_done = proc {
+      create_git_branch input_text_string, view_branch_name
+      @view_branch_name = input_text_string
+      @input_text_string = ''
+      @mode = nil
+    }
   end
 
-  def save_and_exit
-    checkout_viewed_branch
-    exit
+  def checkout_viewed_branch
+    checkout view_branch_name
   end
 
   def is_view_branch?(branch)
@@ -76,6 +92,7 @@ class Controller
     branch == current_branch_name
   end
 
+  # Branch names
   def get_branch_names
     branch_names = all_branch_names sorting_order
     branch_names.filter do |name|
@@ -91,6 +108,7 @@ class Controller
      dates_by_branch[branch]
   end
 
+  # Display options
   def toggle_data
      @should_show_data = !should_show_data
   end
@@ -102,6 +120,41 @@ class Controller
 
   def should_show_data?
     should_show_data
+  end
+
+
+  # Modes
+  def set_mode(value)
+    @mode = value
+  end
+
+  def on_filter_mode
+    mode == 'filter'
+  end
+
+  def on_input_mode
+    mode == 'input'
+  end
+
+  def toggle_filter_mode value = nil
+    if value != nil
+      @mode = value
+      return
+    end
+    if mode != 'input' && mode != 'filter'
+      @mode = 'filter'
+    elsif mode == 'filter'
+      @mode = nil
+    end
+  end
+
+  # Input
+  def add_input(input)
+    if on_filter_mode
+      add_to_filter input
+    elsif on_input_mode
+      add_to_input_text input
+    end
   end
 
   def add_to_filter(letter)
@@ -124,49 +177,6 @@ class Controller
       @input_text_string = input_text_string.slice(0, input_text_string.length - 1) || ''
     end
   end
-
-  def set_mode(value)
-    @mode = value
-  end
-
-  def toggle_filter_mode value = nil
-    if value != nil
-      @mode = value
-      return
-    end
-    if mode != 'input' && mode != 'filter'
-      @mode = 'filter'
-    elsif mode == 'filter'
-      @mode = nil
-    end
-  end
-
-  def on_filter_mode
-    mode == 'filter'
-  end
-
-  def on_input_mode
-    mode == 'input'
-  end
-
-  def add_branch
-    @mode = 'input'
-    @handle_input_done = proc {
-      create_git_branch input_text_string, view_branch_name
-      @view_branch_name = input_text_string
-      @input_text_string = ''
-      @mode = nil
-    }
-  end
-
-  def add_input(input)
-    if on_filter_mode
-      add_to_filter input
-    elsif on_input_mode
-      add_to_input_text input
-    end
-  end
-
   def delete_input
     if on_filter_mode
       delete_last_filter_char
