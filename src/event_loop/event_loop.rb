@@ -21,34 +21,48 @@ class EventLoop
       if event.value == 'y' && controller.awaiting_confirmation?
         controller.confirm!
         handle_change
+        next
       elsif controller.awaiting_confirmation?
         controller.disconfirm!
         handle_change
       end
 
-      if event.value == '/'
+      if event.value == 'q'
+        close_screen
+        exit
+      elsif event.value == '/'
         controller.toggle_filter_mode
         handle_change
+      # Input
       elsif controller.receiving_input? && event.value == "\u007F"
         controller.delete_input
         handle_change
       elsif controller.receiving_input? && event.value.match(/^[a-zA-Z_-]$/)
         controller.add_input event.value
         handle_change
-      elsif event.value == 'q'
-        close_screen
-        exit
-      elsif event.value == 'b'
-        controller.add_branch
+      elsif ["\n", "\r"].include?(event.value) && controller.receiving_input?
+        controller.enter_input!
         handle_change
+      # Display
       elsif event.value == 'd'
         controller.toggle_data
         handle_change
+      elsif event.value == 't'
+        controller.toggle_sort_by_date
+        handle_change
       elsif event.value == " "
+        handle_change
+      # Git commands
+      elsif event.value == 'b'
+        controller.add_branch
         handle_change
       elsif event.value == "x"
         result = controller.delete_branch_if_able
         handle_change
+      elsif ["\n", "\r"].include?(event.value) && !controller.receiving_input?
+        controller.checkout_viewed_branch
+        handle_change
+      # Navigation
       elsif event.value == "\e[B" or event.value == "j"
         controller.toggle_filter_mode false
         controller.next_branch
@@ -59,16 +73,6 @@ class EventLoop
         handle_change
       elsif event.value == "\e[C" or event.value == "l"
         controller.save_and_exit
-      elsif event.value == "\n" or event.value == "\r"
-        if controller.receiving_input?
-          controller.enter_input!
-        else
-          controller.checkout_viewed_branch
-        end
-        handle_change
-      elsif event.value == 't'
-        controller.toggle_sort_by_date
-        handle_change
       end
     end
 
