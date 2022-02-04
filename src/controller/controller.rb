@@ -139,10 +139,12 @@ class Controller
   def toggle_filter_mode value = nil
     if value != nil
       @mode = value
+      @handle_input_done = proc { } if value == 'filter'
       return
     end
     if mode != 'input' && mode != 'filter'
       @mode = 'filter'
+      @handle_input_done = proc { }
     elsif mode == 'filter'
       @mode = nil
     end
@@ -164,6 +166,7 @@ class Controller
   def delete_last_filter_char()
     if filter_string.length == 0
       set_mode nil
+      @handle_input_done = nil
     else
       @filter_string = filter_string.slice(0, filter_string.length - 1) || ''
     end
@@ -177,6 +180,7 @@ class Controller
       @input_text_string = input_text_string.slice(0, input_text_string.length - 1) || ''
     end
   end
+
   def delete_input
     if on_filter_mode
       delete_last_filter_char
@@ -195,6 +199,10 @@ class Controller
 
   def receiving_input?
    !!handle_input_done
+  end
+
+  def receiving_text_input?
+   !!handle_input_done && mode != 'filter'
   end
 
   def enter_input!

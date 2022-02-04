@@ -27,10 +27,7 @@ class EventLoop
         handle_change
       end
 
-      if event.value == 'q'
-        close_screen
-        exit
-      elsif event.value == '/'
+      if event.value == '/'
         controller.toggle_filter_mode
         handle_change
       # Input
@@ -73,6 +70,9 @@ class EventLoop
         handle_change
       elsif event.value == "\e[C" or event.value == "l"
         controller.save_and_exit
+      elsif event.value == 'q'
+        close_screen
+        exit
       end
     end
 

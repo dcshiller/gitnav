@@ -30,7 +30,7 @@ class Display
 
   def redraw_log_panel
     log_panel.setpos(0,0)
-    log_panel.addstr(controller.receiving_input? ? ">#{controller.input_text_string}\n" : "")
+    log_panel.addstr(controller.receiving_text_input?  ? ">#{controller.input_text_string}\n" : "")
     log_panel.addstr(controller.filter_string.length > 0 || controller.on_filter_mode ? "/#{controller.filter_string}\n" : "\n")
     log_panel.addstr(controller.notes[-1])
     log_panel.refresh
